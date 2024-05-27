@@ -4,7 +4,12 @@ include_once "PDO.php";
 function GetOnePostFromId($id)
 {
   global $PDO;
-  $response = $PDO->query("SELECT * FROM post WHERE id = $id");
+  $response = $PDO->prepare("SELECT * FROM post WHERE id = $id");
+  $response->execute(
+    array(
+      "id" => $id
+    )
+  );
   return $response->fetch();
 }
 
@@ -22,18 +27,29 @@ function GetAllPosts()
 function GetAllPostsFromUserId($userId)
 {
   global $PDO;
-  $response = $PDO->query("SELECT * FROM post WHERE user_id = $userId ORDER BY created_at DESC");
+  $response = $PDO->prepare("SELECT * FROM post WHERE user_id = $userId ORDER BY created_at DESC");
+  $response->execute(
+    array(
+      "user_id" => $userId
+    )
+  );
   return $response->fetchAll();
 }
 
 function SearchInPosts($search)
 {
   global $PDO;
-  $response = $PDO->query(
+  $response = $PDO->prepare(
     "SELECT post.*, user.nickname "
       . "FROM post LEFT JOIN user on (post.user_id = user.id) "
-      . "WHERE content like '%$search%' "
+      . "WHERE content like :search "
       . "ORDER BY post.created_at DESC"
+  );
+  $searchWithPercent = "%$search%";
+  $response->execute(
+    array(
+      "search" => $searchWithPercent
+    )
   );
   return $response->fetchAll();
 }
@@ -41,5 +57,11 @@ function SearchInPosts($search)
 function CreateNewPost($userId, $msg)
 {
   global $PDO;
-  $PDO->query("INSERT INTO post(user_id, content) values ($userId, '$msg')");
+  $response = $PDO->prepare("INSERT INTO post(user_id, content) values (:userId, :msg)");
+  $response->execute(
+    array(
+      "userId" => $userId,
+      "msg" => $msg
+    )
+  );
 }
