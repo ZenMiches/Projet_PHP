@@ -49,3 +49,16 @@ function GetAllCommentsFromPostId($postId)
   $stmt->execute();
   return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+function CreateNewComment($userId, $postId, $comment)
+{
+  global $PDO;
+  $response = $PDO->prepare("INSERT INTO comment(user_id, post_id, content) values (:userId, :postId, :comment)");
+  $response->execute(
+    array(
+      "userId" => $userId,
+      "postId" => $postId,
+      "comment" => $comment
+    )
+  );
+}
