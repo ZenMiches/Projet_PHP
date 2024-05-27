@@ -31,8 +31,12 @@ switch ($action) {
 
     include "../models/CommentManager.php";
     $comments = array();
+    foreach ($posts as $post) {
+      $postId = $post['id'];
+      $comments[$postId] = GetAllCommentsFromUserId($postId);
+    }
 
-    // ===================HARDCODED PART===========================
+    /*// ===================HARDCODED PART===========================
     // format idPost => array of comments
     $comments[1] = array(
       array("nickname" => "FakeUser1", "created_at" => "1970-01-01 00:00:00", "content" => "Fake comment 01."),
@@ -43,7 +47,7 @@ switch ($action) {
       array("nickname" => "FakeUser1", "created_at" => "1970-01-01 00:00:00", "content" => "Fake comment 04."),
     );
     // =============================================================
-
+    */
     include "../views/DisplayPosts.php";
     break;
 }
